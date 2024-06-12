@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def updated(self, instance, validated_data):
         """update and return user."""
-        password = validated_data.pop('password',None)
+        password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
 
         if password:
@@ -31,7 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
-
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -55,5 +54,6 @@ class AuthTokenSerializer(serializers.Serializer):
             msg = _('Unable to authenticate with provided credentials.')
             raise serializers.ValidationError(msg, code='authorization')
 
-        attrs['user']=user
+        attrs['user'] = user
         return attrs
+

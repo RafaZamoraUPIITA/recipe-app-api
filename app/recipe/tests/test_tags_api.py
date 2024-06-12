@@ -19,6 +19,7 @@ from recipe.serializers import TagSerializer
 
 TAGS_URL = reverse('recipe:tag-list')
 
+
 def detail_url(tag_id):
     """Create and return a tag detail url."""
     return reverse('recipe:tag-detail',args=[tag_id])
@@ -26,6 +27,7 @@ def detail_url(tag_id):
 def create_user(email='user@example.com',password='testpass123'):
     """Create and return a user."""
     return get_user_model().objects.create_user(email=email, password=password)
+
 
 class PublicTagsApiTest(TestCase):
     """Test unauthenticated API requests."""
@@ -37,6 +39,7 @@ class PublicTagsApiTest(TestCase):
         res = self.client.get(TAGS_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class PrivatedTagsApiTests(TestCase):
     """Test authenticated API request."""
@@ -67,7 +70,7 @@ class PrivatedTagsApiTests(TestCase):
         res = self.client.get(TAGS_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data),1)
+        self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['name'], tag.name)
         self.assertEqual(res.data[0]['id'], tag.id)
 
@@ -89,7 +92,7 @@ class PrivatedTagsApiTests(TestCase):
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        tags =  Tag.objects.filter(user=self.user)
+        tags = Tag.objects.filter(user=self.user)
 
         self.assertFalse(tags.exists())
 
@@ -107,7 +110,7 @@ class PrivatedTagsApiTests(TestCase):
 
         recipe.tags.add(tag1)
 
-        res = self.client.get(TAGS_URL,{'assigned_only':1})
+        res = self.client.get(TAGS_URL, {'assigned_only': 1})
 
         s1 = TagSerializer(tag1)
         s2 = TagSerializer(tag2)
@@ -117,7 +120,7 @@ class PrivatedTagsApiTests(TestCase):
     def test_filtered_tags_unique(self):
         """Test filtered tags returns an unique list."""
         tag = Tag.objects.create(user=self.user, name='Breakfast')
-        Tag.objects.create(user=self.user,name='Dinner')
+        Tag.objects.create(user=self.user, name='Dinner')
 
         recipe1 = Recipe.objects.create(
             title='Pancakes',
@@ -136,6 +139,6 @@ class PrivatedTagsApiTests(TestCase):
         recipe1.tags.add(tag)
         recipe2.tags.add(tag)
 
-        res = self.client.get(TAGS_URL,{'assigned_only':1})
+        res = self.client.get(TAGS_URL, {'assigned_only': 1})
 
-        self.assertEqual(len(res.data),1)
+        self.assertEqual(len(res.data), 1)

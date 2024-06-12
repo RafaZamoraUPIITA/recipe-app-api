@@ -9,28 +9,31 @@ from core.models import (
     Ingredient,
     )
 
+
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ['id','name']
+        fields = ['id', 'name']
         read_only_fields = ['id']
+
+
 class TagSerializer(serializers.ModelSerializer):
     """Serializer for tags."""
 
     class Meta:
-        model= Tag
+        model = Tag
         fields = ['id','name']
         read_only_fields = ['id']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipes."""
-    tags = TagSerializer(many=True,required=False)
-    ingredients = IngredientSerializer(many=True, required= False)
+    tags = TagSerializer(many=True, required=False)
+    ingredients = IngredientSerializer(many=True, required=False)
 
     class Meta:
-        model =  Recipe
-        fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags','ingredients']
+        model = Recipe
+        fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags', 'ingredients']
         read_only_fields = ['id']
 
     def _get_or_create_ingredients(self, ingredients, recipe):
@@ -56,7 +59,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a recipe."""
-        tags = validated_data.pop('tags',[])
+        tags = validated_data.pop('tags', [])
         ingredients = validated_data.pop('ingredients', [])
         recipe = Recipe.objects.create(**validated_data)
         self._get_or_create_tags(tags, recipe)
@@ -65,11 +68,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Update recipe."""
-        tags = validated_data.pop('tags',None)
-        ingredients = validated_data.pop('ingredients',None)
+        tags = validated_data.pop('tags', None)
+        ingredients = validated_data.pop('ingredients', None)
         if tags is not None:
             instance.tags.clear()
-            self._get_or_create_tags(tags,instance)
+            self._get_or_create_tags(tags, instance)
         if ingredients is not None:
             instance.ingredients.clear()
             self._get_or_create_ingredients(ingredients, instance)
@@ -80,15 +83,17 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class RecipeDetailSerializer(RecipeSerializer):
     """Serializer for recipe detail view."""
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + ['description', 'image']
 
+
 class RecipeImageSerializer(serializers.ModelSerializer):
     """Serializer for uploading  images to recipes."""
     class Meta:
         model = Recipe
-        fields = ['id','image']
+        fields = ['id', 'image']
         read_only_field = [id]
         extra_kwargs = {'image': {'required': 'True'}}
