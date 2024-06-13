@@ -62,6 +62,7 @@ class PublicRecipeAPITests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+
     def test_auth_required(self):
         """Test auth is required to call API."""
         res = self.client.get(RECIPES_URL)
@@ -401,8 +402,10 @@ class PrivateRecipeAPITests(TestCase):
         """Test filtering recipes by ingredients."""
         r1 = create_recipe(user=self.user, title='Posh Beans on Toast')
         r2 = create_recipe(user=self.user, title='Chicken Cacciatore')
-        ingredient1 = Ingredient.objects.create(user=self.user
-                                                , name='Feta Cheese')
+        ingredient1 = Ingredient.objects.create(
+            user=self.user,
+            name='Feta Cheese'
+        )
         ingredient2 = Ingredient.objects.create(user=self.user, name='Chicken')
 
         r1.ingredients.add(ingredient1)
