@@ -62,13 +62,12 @@ class PublicRecipeAPITests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-
-
     def test_auth_required(self):
         """Test auth is required to call API."""
         res = self.client.get(RECIPES_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class PrivateRecipeAPITests(TestCase):
     """Test authnticated API requests."""
@@ -217,7 +216,7 @@ class PrivateRecipeAPITests(TestCase):
         recipes = Recipe.objects.filter(user=self.user)
         self.assertEqual(recipes.count(), 1)
         recipe = recipes[0]
-        self.assertEqual(recipe.tags.count(),2)
+        self.assertEqual(recipe.tags.count(), 2)
         for tag in payload['tags']:
             exists = recipe.tags.filter(
                 name=tag['name'],
@@ -386,7 +385,7 @@ class PrivateRecipeAPITests(TestCase):
         tag2 = Tag.objects.create(user=self.user, name='Vegetarian')
         r1.tags.add(tag1)
         r2.tags.add(tag2)
-        r3 =  create_recipe(user=self.user, title='Fish and chips')
+        r3 = create_recipe(user=self.user, title='Fish and chips')
 
         params = {'tags': f'{tag1.id},{tag2.id}'}
         res = self.client.get(RECIPES_URL, params)
@@ -402,7 +401,8 @@ class PrivateRecipeAPITests(TestCase):
         """Test filtering recipes by ingredients."""
         r1 = create_recipe(user=self.user, title='Posh Beans on Toast')
         r2 = create_recipe(user=self.user, title='Chicken Cacciatore')
-        ingredient1 = Ingredient.objects.create(user=self.user, name='Feta Cheese')
+        ingredient1 = Ingredient.objects.create(user=self.user
+                                                , name='Feta Cheese')
         ingredient2 = Ingredient.objects.create(user=self.user, name='Chicken')
 
         r1.ingredients.add(ingredient1)
